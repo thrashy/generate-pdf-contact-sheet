@@ -1,0 +1,14 @@
+.DS_Store
+.idea
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Dependencies
+vendor/
+Godeps/
