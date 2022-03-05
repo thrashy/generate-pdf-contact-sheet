@@ -20,6 +20,7 @@ import (
 
 	"github.com/golang/freetype"
 	"github.com/jung-kurt/gofpdf"
+	"github.com/schollz/progressbar/v3"
 )
 
 type ContactSheetItem struct {
@@ -87,13 +88,15 @@ func generateContactSheet(fileNames []string, outputFile string, columns int) er
 	contactSheetPdf := createPdf()
 
 	fileIdx := 0
+	lenFilenames := len(fileNames)
 	var err error
+	bar := progressbar.Default(int64(lenFilenames))
 
-	for fileIdx >= 0 && fileIdx < len(fileNames) {
+	for fileIdx >= 0 && fileIdx < lenFilenames {
 		canvas := image.NewRGBA(image.Rectangle{Max: sp})
 		draw.Draw(canvas, canvas.Bounds(), image.White, image.ZP, draw.Src)
 
-		fileIdx, err = createImageGrid(canvas, fileNames, rows, columns, fileIdx, contactSheetItem)
+		fileIdx, err = createImageGrid(bar, canvas, fileNames, rows, columns, fileIdx, contactSheetItem)
 		if err != nil {
 			return err
 		}
@@ -113,7 +116,7 @@ func generateContactSheet(fileNames []string, outputFile string, columns int) er
 	return nil
 }
 
-func createImageGrid(canvas *image.RGBA, fileNames []string, rows int, columns int, fileIdx int, contactSheetItem ContactSheetItem) (int, error) {
+func createImageGrid(bar *progressbar.ProgressBar, canvas *image.RGBA, fileNames []string, rows int, columns int, fileIdx int, contactSheetItem ContactSheetItem) (int, error) {
 	for row := 0; row < rows; row++ {
 		for col := 0; col < columns; col++ {
 			//last image processed within grid
@@ -127,6 +130,7 @@ func createImageGrid(canvas *image.RGBA, fileNames []string, rows int, columns i
 			}
 			appendImage(canvas, img, contactSheetItem, row, col, fileName)
 			fileIdx++
+			_ = bar.Add(fileIdx)
 		}
 	}
 	return fileIdx, nil
