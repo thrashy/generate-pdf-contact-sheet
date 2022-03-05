@@ -79,7 +79,7 @@ func main() {
 func generateContactSheet(fileNames []string, outputFile string, columns int) error {
 	pageSize := 11 / 8.5
 	rows := int(math.Floor(float64(columns) * pageSize))
-	contactSheetItem := ContactSheetItem{Width: 300, Height: 300, HorizontalMargin: 10, VerticalMargin: 26}
+	contactSheetItem := ContactSheetItem{Width: 600, Height: 600, HorizontalMargin: 20, VerticalMargin: 52}
 
 	canvasWidth := (contactSheetItem.HorizontalMargin * (columns - 1)) + (columns * contactSheetItem.Width)
 	canvasHeight := (contactSheetItem.VerticalMargin * (rows)) + (rows * contactSheetItem.Height)
@@ -174,7 +174,7 @@ func addLabel(img *image.RGBA, contactSheetItem ContactSheetItem, x, y int, labe
 	var (
 		fgColor  image.Image
 		fontFace *truetype.Font
-		fontSize = 20.0
+		fontSize = 40.0
 	)
 
 	fgColor = image.Black
@@ -216,7 +216,7 @@ func AddNextImage(pdf *gofpdf.Fpdf, imageName string, img *image.RGBA) error {
 	buf := new(bytes.Buffer)
 
 	err := jpeg.Encode(buf, img, &jpeg.Options{
-		Quality: 90,
+		Quality: 95,
 	})
 	if err != nil {
 		return err
