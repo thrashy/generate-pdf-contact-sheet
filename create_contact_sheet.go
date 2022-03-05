@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"embed"
+	"fmt"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/draw"
 	"golang.org/x/image/font"
@@ -12,7 +14,9 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	"math/rand"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -29,6 +33,10 @@ type ContactSheetItem struct {
 	HorizontalMargin int
 	VerticalMargin   int
 }
+
+// Embed the entire directory.
+//go:embed assets/buddies/*
+var buddyEmbed embed.FS
 
 func main() {
 
@@ -74,6 +82,7 @@ func main() {
 
 	duration := time.Since(start)
 	log.Printf("Completed Process in %f seconds.", duration.Seconds())
+	printRandomBuddy(buddyEmbed)
 }
 
 func generateContactSheet(fileNames []string, outputFile string, columns int) error {
@@ -232,4 +241,14 @@ func AddNextImage(pdf *gofpdf.Fpdf, imageName string, img *image.RGBA) error {
 
 func savePdf(pdf *gofpdf.Fpdf, filename string) error {
 	return pdf.OutputFileAndClose(filename)
+}
+
+func printRandomBuddy(buddyEmbed embed.FS) {
+	buddyDir := "assets/buddies"
+	buddyFiles, _ := buddyEmbed.ReadDir(buddyDir)
+	rand.Seed(time.Now().Unix())
+	randIdx := rand.Intn(len(buddyFiles))
+	buddyFile := buddyFiles[randIdx].Name()
+	file, _ := buddyEmbed.ReadFile(path.Join(buddyDir, buddyFile))
+	fmt.Print(string(file))
 }
