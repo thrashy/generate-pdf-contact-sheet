@@ -130,7 +130,7 @@ func createImageGrid(bar *progressbar.ProgressBar, canvas *image.RGBA, fileNames
 			}
 			appendImage(canvas, img, contactSheetItem, row, col, fileName)
 			fileIdx++
-			_ = bar.Add(fileIdx)
+			_ = bar.Add(1)
 		}
 	}
 	return fileIdx, nil
